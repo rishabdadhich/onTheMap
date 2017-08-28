@@ -51,7 +51,7 @@ class udacityClient {
                 displayError("error found in data")
                 return
             }
-            let userData = data.subdata(in: Range(5...Int(data.count)))
+            let userData = data.subdata(in : Range(5..<data.count))
             
             let parsedData : AnyObject
             do {
@@ -103,7 +103,8 @@ class udacityClient {
                 displayError("error found in data")
                 return
             }
-             let userData = data.subdata(in: Range(5...Int(data.count)))
+             let userData = data.subdata(in: Range(5..<data.count))
+            
             let parsedData : AnyObject
             do {
                 parsedData = try JSONSerialization.jsonObject(with: userData, options: .allowFragments) as! NSDictionary
