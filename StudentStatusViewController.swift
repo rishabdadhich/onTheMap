@@ -95,6 +95,7 @@ class StudentStatusViewController: UIViewController,UITextFieldDelegate,MKMapVie
             UIApplication.shared.isNetworkActivityIndicatorVisible = true
             
             performUIUpdatesOnMain {
+                UIApplication.shared.isNetworkActivityIndicatorVisible = true
                 // geolocator object
                 
                 let geocoder = CLGeocoder()

@@ -60,6 +60,10 @@ class TableViewController: UITableViewController {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
             
         }
+            //check for invalid
+        else{
+            displayAlertMessage(message: "URL is not correct")
+        }
     }
     
     // swipe to delete

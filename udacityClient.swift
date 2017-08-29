@@ -38,12 +38,12 @@ class udacityClient {
             }
             
             guard error == nil else{
-                displayError("error found in guar error")
+                displayError("credentials are incorrect")
                return
             }
             
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode,statusCode >= 200 && statusCode <= 299 else{
-                displayError("Your request returned a status code other than 2xx!")
+                displayError("no internet connection")
                 return
             }
             
