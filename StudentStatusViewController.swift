@@ -95,7 +95,7 @@ class StudentStatusViewController: UIViewController,UITextFieldDelegate,MKMapVie
             UIApplication.shared.isNetworkActivityIndicatorVisible = true
             
             performUIUpdatesOnMain {
-                UIApplication.shared.isNetworkActivityIndicatorVisible = true
+                
                 // geolocator object
                 
                 let geocoder = CLGeocoder()
@@ -126,9 +126,9 @@ class StudentStatusViewController: UIViewController,UITextFieldDelegate,MKMapVie
             }// perform ui update end
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
         }
-        
+            
         else if configuredUIState == "StatusURL"{
-          
+            
             guard postStatusLink.text?.isEmpty != nil else {
                 displayAlertMessage(message: "please enter some status url")
                 return
@@ -165,7 +165,7 @@ class StudentStatusViewController: UIViewController,UITextFieldDelegate,MKMapVie
                 parsingData.sharedInstance().updateUserLocation(userIDUniqueKey: userInfo.userKey, objectID: userInfo.objectId, firstName: userInfo.firstName, lastName: userInfo.lastName, mapString: self.searchLocationTextField.text!, mediaURL: self.postStatusLink.text!, latitude: self.pinPlacemark!.location!.coordinate.latitude, longitude: self.pinPlacemark!.location!.coordinate.longitude){(success,error) in
                     
                     if success{
-                    UIApplication.shared.isNetworkActivityIndicatorVisible = true
+                        UIApplication.shared.isNetworkActivityIndicatorVisible = true
                         
                         self.performUIUpdatesOnMain {
                             // set users location coordinate to center the map on when view controller is dismissed
@@ -187,19 +187,20 @@ class StudentStatusViewController: UIViewController,UITextFieldDelegate,MKMapVie
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false
             }
             
-    }// status url configured ui end
+        }// status url configured ui end
     }// find on map button end
     
-    //Mark: hide keybord when return key is pressed and perform submit action on findOnMapButton 
+    //Mark: hide keybord when return key is pressed and perform submit action on findOnMapButton
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         view.endEditing(true)
+        textField.resignFirstResponder()
         findOnMapButton.sendActions(for: .touchUpInside)
         return false
     }
     //Mark: add prefix https
     func textFieldDidBeginEditing(_ textField: UITextField) {
         if textField.tag == 1 {
-            textField.text = "https://" 
+            textField.text = "https://"
         }
     }
 }

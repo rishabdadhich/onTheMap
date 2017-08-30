@@ -8,23 +8,30 @@
 
 import UIKit
 
-class loginViewController: UIViewController {
-
+class loginViewController: UIViewController,UITextFieldDelegate {
+    
     @IBOutlet weak var signupButton: UIButton!
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var usernameText: UITextField!
     @IBOutlet weak var passwordText: UITextField!
-   
-
+    
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        subscribeToKeyboardNotifications()
         passwordText.text = ""
         usernameText.text = ""
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        unsubscribeFromKeyboardNotifications()
+    }
+    
     @IBAction func signupPressed(_ sender: Any) {
         UIApplication.shared.open(URL(string:"https://auth.udacity.com/sign-up?next=https%3A%2F%2Fclassroom.udacity.com%2Fauthenticated")!, options: [:], completionHandler: nil)
-    
+        
     }
     @IBAction func loginPressed(_ sender: Any) {
         setUIEnabled(enable: false)
@@ -32,7 +39,7 @@ class loginViewController: UIViewController {
         
         guard usernameText.text != nil && (usernameText.text?.contains("@"))! else {
             setUIEnabled(enable: true)
-           displayAlertMessage(message: "Please enter a valid email")
+            displayAlertMessage(message: "Please enter a valid email")
             return
         }
         
@@ -66,8 +73,8 @@ class loginViewController: UIViewController {
             
         }
     }
-
-       func setUIEnabled(enable:Bool) {
+    
+    func setUIEnabled(enable:Bool) {
         loginButton.isEnabled = enable
         
         performUIUpdatesOnMain{
@@ -77,7 +84,7 @@ class loginViewController: UIViewController {
                 self.loginButton.setTitle("Signing In", for: .disabled)
             }
         }
-        }
+    }
     
     func completeLogIn()   {
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
@@ -95,9 +102,51 @@ class loginViewController: UIViewController {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         view.endEditing(true)
+        textField.resignFirstResponder()
         loginButton.sendActions(for: .touchUpInside)
-        return false
+        print("return is pressed")
+        return true
     }
-
-
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        usernameText.resignFirstResponder()
+        passwordText.resignFirstResponder()
+    }
+    
+    ////////// keyboard part ////////
+    
+    func keyboardWillShow(_ notification:Notification) {
+        if passwordText.isFirstResponder && view.frame.origin.y == 0.0 {
+            
+            view.frame.origin.y = 0 - getKeyboardHeight(notification)
+        }
+    }
+    
+    func getKeyboardHeight(_ notification:Notification) -> CGFloat {
+        
+        let userInfo = notification.userInfo
+        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue
+        return keyboardSize.cgRectValue.height
+    }
+    
+    func subscribeToKeyboardNotifications() {
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    func unsubscribeFromKeyboardNotifications() {
+        
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    func keyboardWillHide(_ notification:Notification) {
+        if passwordText.isFirstResponder {
+            
+            view.frame.origin.y = 0
+        }
+    }
+    
+    
 }

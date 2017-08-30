@@ -15,7 +15,7 @@ class udacityClient {
             static var sharedInstance = udacityClient()
         }
         return Singleton.sharedInstance
-    
+        
     }
     
     //Mark : get user session key
@@ -38,12 +38,12 @@ class udacityClient {
             }
             
             guard error == nil else{
-                displayError("credentials are incorrect")
-               return
+                displayError("no internet found")
+                return
             }
             
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode,statusCode >= 200 && statusCode <= 299 else{
-                displayError("no internet connection")
+                displayError("incorrent credentials")
                 return
             }
             
@@ -68,7 +68,7 @@ class udacityClient {
                 completionHandlerForUserSessionKey(userSessionKey, nil)
             }
             else{
-                displayError("invalid username or password")
+                displayError("error found in parsing data")
             }
             
             
@@ -103,7 +103,7 @@ class udacityClient {
                 displayError("error found in data")
                 return
             }
-             let userData = data.subdata(in: Range(5..<data.count))
+            let userData = data.subdata(in: Range(5..<data.count))
             
             let parsedData : AnyObject
             do {
@@ -124,12 +124,12 @@ class udacityClient {
         task.resume()
     }
     
-    //Mark: delete user session 
+    //Mark: delete user session
     
     func deleteUserSession ( completionHandlerDeleteUserSession : @escaping ( _ success : Bool , _ error : String?) -> Void ) {
         
         
-       
+        
         let request = NSMutableURLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
         request.httpMethod = "DELETE"
         var xsrfCookie: HTTPCookie? = nil
@@ -144,16 +144,16 @@ class udacityClient {
         let task = session.dataTask(with: request as URLRequest) { data, response, error in
             
             
-           
+            
             guard error == nil else {
-                print(error)
+                print(error!)
                 completionHandlerDeleteUserSession(false, "We couldn't Log you out")
                 return
             }
             
             completionHandlerDeleteUserSession(true, nil)
-            }
+        }
         task.resume()
     }
-
+    
 }

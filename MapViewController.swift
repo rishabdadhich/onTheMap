@@ -5,20 +5,20 @@
 //  Created by Rishabh on 03/06/1939 Saka.
 //  Copyright © 1939 Saka rishi. All rights reserved.
 //
-
+import Foundation
 import UIKit
 import MapKit
 
-class MapViewController: UIViewController {
-
+class MapViewController: UIViewController , MKMapViewDelegate {
+    
     @IBOutlet weak var mapview: MKMapView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -34,11 +34,11 @@ class MapViewController: UIViewController {
         parsingData.sharedInstance().getUserLocation(userInfo.userKey){ (success,error) in
             
             if success! {
-              UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                UIApplication.shared.isNetworkActivityIndicatorVisible = false
                 let latitude = userInfo.mapLatitude
                 let longitude = userInfo.mapLongitude
                 
-               let total = latitude + longitude
+                let total = latitude + longitude
                 // check for != 0 and >0
                 
                 if total != 0 {
@@ -52,7 +52,7 @@ class MapViewController: UIViewController {
                 }
             }
             else{
-                print(error)
+                print(error!)
                 self.displayAlertMessage(message: error!)
             }
         }
@@ -64,7 +64,7 @@ class MapViewController: UIViewController {
             if success! {
                 UIApplication.shared.isNetworkActivityIndicatorVisible = true
                 
-            // remove old pins 
+                // remove old pins
                 self.mapview.removeAnnotations(self.mapview.annotations)
                 
                 // reinitialize map with new refreshed pins
@@ -77,8 +77,8 @@ class MapViewController: UIViewController {
             
         }
     }
-
-      @IBAction func refreshButton(_ sender: Any) {
+    
+    @IBAction func refreshButton(_ sender: Any) {
         parsingData.sharedInstance().getStudentsLocation(){
             (success , error) in
             if success! {
@@ -94,7 +94,7 @@ class MapViewController: UIViewController {
             }
         }
     }
-
+    
     @IBAction func logoutButton(_ sender: Any) {
         
         udacityClient.sharedInstance().deleteUserSession(){
@@ -112,7 +112,7 @@ class MapViewController: UIViewController {
         }
     }
     
-   
+    
     
     func reinitializePopulateMap(){
         var annotations = [MKPointAnnotation]()
@@ -141,7 +141,7 @@ class MapViewController: UIViewController {
     
     //Mark: for opening pin view of students
     
-    func mapView(_ mapView:MKMapView, viewFor annotation: MKAnnotation) -> MKPinAnnotationView?{
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         let reuseID = "pin"
         var pinView = mapview.dequeueReusableAnnotationView(withIdentifier: reuseID) as? MKPinAnnotationView
         if pinView == nil{
@@ -154,14 +154,17 @@ class MapViewController: UIViewController {
             pinView?.annotation = annotation
         }
         return pinView
+        
     }
+    
+    
     
     // open link on browser
     
-    func mapView(_ mapView: MKMapView, annotionView view:MKAnnotationView, callOutAccessoryControlTapped control:UIControl) {
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         let mediaUrl = URL(string: displayAlert.sharedInstance().formatURL(url: ((view.annotation?.subtitle)!)!))
         
         UIApplication.shared.open(mediaUrl!, options: [:], completionHandler: nil)
-        
     }
+    
 }
